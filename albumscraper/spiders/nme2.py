@@ -2,6 +2,12 @@ import scrapy
 import json
 from urllib.parse import urljoin
 from albumscraper.items import Album
+import numpy as np
+
+# text processing
+import re
+from sklearn.feature_extraction.stop_words import ENGLISH_STOP_WORDS as sw
+from nltk.stem import PorterStemmer
 
 
 class RollingstoneSpider(scrapy.Spider):
@@ -29,8 +35,16 @@ class RollingstoneSpider(scrapy.Spider):
         url = response.request.url
         detail = response.xpath("//div[@class='articleBody']//text()").extract()
 
+        # text preprocessing
+        detail = np.array(detail)
+        detail = [word.rstrip() for word in detail] # remove all trailing white spaces
+        detail = re.sub(r'[^a-zA-Z0-9\s]', "", str(detail)).lower()  # remove special characters, lowercase
+        detail = [word for word in detail.split() if word not in (sw)]  # remove stopwords
+        ps = PorterStemmer()
+        detail = ' '.join([ps.stem(word) for word in detail])   # stemming
+
         # print the result
-        yield {'name': name, 'url': url}
+        yield {'name': name, 'url': url, 'detail':detail}
 
         # preprocessing some extracted info
         # description = ''.join(detail)

@@ -2,6 +2,23 @@ import scrapy
 import json
 from urllib.parse import urljoin
 from albumscraper.items import Album
+import numpy as np
+
+# text processing
+import re
+from sklearn.feature_extraction.stop_words import ENGLISH_STOP_WORDS as sw
+from nltk.stem import PorterStemmer
+
+
+# text preprocessing
+def clean(text):
+    text = np.array(text)
+    text = [word.rstrip() for word in text] # remove all trailing white spaces
+    text = re.sub(r'[^a-zA-Z0-9\s]', "", str(text)).lower()  # remove special characters, lowercase
+    text = [word for word in text.split() if word not in (sw)]  # remove stopwords
+    ps = PorterStemmer()
+    text = ' '.join([ps.stem(word) for word in text])   # stemming
+    return text
 
 
 class AlbumSpider(scrapy.Spider):
@@ -28,18 +45,26 @@ class AlbumSpider(scrapy.Spider):
     def parse_album(self, response):
         # extract info from html
         name = response.xpath(
-          "//h1[@class='single-album-tombstone__review-title']//text()").extract_first()
+            "//h1[@class='single-album-tombstone__review-title']//text()").extract_first()
         url = response.request.url
-        description_list = response.xpath(
-          "//div[@class='contents dropcap']//text()").extract()
+        detail = response.xpath(
+            "//div[@class='contents dropcap']//text()").extract()
 
-        # preprocessing some extracted info
-        description = ''.join(description_list)
+        # text preprocessing
+        detail = np.array(detail)
+        detail = [word.rstrip() for word in detail] # remove all trailing white spaces
+        detail = re.sub(r'[^a-zA-Z0-9\s]', "", str(detail)).lower()  # remove special characters, lowercase
+        detail = [word for word in detail.split() if word not in (sw)]  # remove stopwords
+        ps = PorterStemmer()
+        detail = ' '.join([ps.stem(word) for word in detail])   # stemming
+
+        # print the result
+        yield {'name': name, 'url': url, 'detail':detail}
 
         # create scrapy Item
         album = Album()
         album['name'] = name
         album['url'] = url
-        #album['description'] = description
+        #album['description'] = detail
 
         yield album

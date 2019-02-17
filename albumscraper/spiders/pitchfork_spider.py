@@ -8,7 +8,6 @@ from albumscraper.items import Album
 class PitchforkSpider(scrapy.Spider):
     name = 'pitchfork_spider'
     allowed_domains = ['pitchfork.com']
-    # start urls are the urls for multiple infinite-scroll pages
     start_urls = ['https://pitchfork.com/reviews/albums/']
 
     def parse(self, response):

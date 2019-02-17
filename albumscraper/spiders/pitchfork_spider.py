@@ -9,8 +9,7 @@ class PitchforkSpider(scrapy.Spider):
     name = 'pitchfork_spider'
     allowed_domains = ['pitchfork.com']
     # start urls are the urls for multiple infinite-scroll pages
-    start_urls = ['https://pitchfork.com/reviews/albums/?page='
-                    + str(n) for n in range(1, 1000)]
+    start_urls = ['https://pitchfork.com/reviews/albums/']
 
     def parse(self, response):
         # collect all album links
@@ -36,8 +35,10 @@ class PitchforkSpider(scrapy.Spider):
           "//div[@class='contents dropcap']//text()").extract()
 
         # text preprocessing
-        description = [''.join(description_list)]
+        description = ''.join(description_list)
         description = preprocessing.preprocess_text(description)
+        name = preprocessing.preprocess_text(
+                name, specialchars=False, stopwords=False, stem=False)
 
         # create scrapy Item
         album = Album()

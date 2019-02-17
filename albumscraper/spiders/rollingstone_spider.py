@@ -28,12 +28,15 @@ class RollingstoneSpider(scrapy.Spider):
 		# extract info from each article
 		name = response.xpath("//title/text()").extract_first()
 		url = response.request.url
-		description = response.xpath(
+		description_list = response.xpath(
 			"""//meta[contains(@class,'swiftype') and contains(@name,'body')
 			and contains(@data-type,'text')]/@content""").extract()
 
 		# text preprocessing
+		description = ''.join(description_list)
 		description = preprocessing.preprocess_text(description)
+		name = preprocessing.preprocess_text(
+				name, specialchars=False, stopwords=False, stem=False)
 
 		# create scrapy Item
 		album = Album()

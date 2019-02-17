@@ -1,7 +1,6 @@
 import re
 from sklearn.feature_extraction.stop_words import ENGLISH_STOP_WORDS as sw
 from nltk.stem import PorterStemmer
-import numpy as np
 
 
 def preprocess_text(text, whitespace=True, specialchars=True, stopwords=True, stem=True):
@@ -12,10 +11,10 @@ def preprocess_text(text, whitespace=True, specialchars=True, stopwords=True, st
     text to lowercase. stopwords=True removes stopwords, and stem=True uses a
     porterstemmer to turn each word to its stem. At default, all options are enabled.
     '''
-    text = np.array(text)
+    #text = np.array(text)
     # remove trailing whitespaces
     if whitespace:
-        text = [word.rstrip() for word in text]
+        text = " ".join(text.split())
     # remove special characters and convert to lowercase
     if specialchars:
         text = re.sub(r'[^a-zA-Z0-9\s]', "", str(text)).lower()

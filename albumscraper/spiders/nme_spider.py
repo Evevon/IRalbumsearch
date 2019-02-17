@@ -29,10 +29,13 @@ class NmeSpider(scrapy.Spider):
         # extract info from each article
         name = response.xpath("//h1[@class='title-primary']//text()").extract_first()
         url = response.request.url
-        description = response.xpath("//div[@class='articleBody']//text()").extract()
+        description_list = response.xpath("//div[@class='articleBody']//text()").extract()
 
         # text preprocessing
+        description = ''.join(description_list)
         description = preprocessing.preprocess_text(description)
+        name = preprocessing.preprocess_text(
+                name, specialchars=False, stopwords=False, stem=False)
 
         # create scrapy Item
         album = Album()

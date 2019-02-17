@@ -11,4 +11,4 @@ from scrapy.item import Item, Field
 class Album(Item):
     name = Field()
     url = Field()
-    #description = scrapy.Field()
+    description = Field()

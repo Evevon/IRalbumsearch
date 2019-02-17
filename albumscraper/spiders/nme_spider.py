@@ -1,16 +1,12 @@
 import scrapy
 import json
+import preprocessing
 from urllib.parse import urljoin
 from albumscraper.items import Album
-import numpy as np
-
-# text processing
-import re
-from sklearn.feature_extraction.stop_words import ENGLISH_STOP_WORDS as sw
-from nltk.stem import PorterStemmer
 
 
-class RollingstoneSpider(scrapy.Spider):
+
+class NmeSpider(scrapy.Spider):
     name = 'nme_spider'
     allowed_domains = ['www.nme.com']
     start_urls = ['https://www.nme.com/news/music/page/0']
@@ -33,24 +29,15 @@ class RollingstoneSpider(scrapy.Spider):
         # extract info from each article
         name = response.xpath("//h1[@class='title-primary']//text()").extract_first()
         url = response.request.url
-        detail = response.xpath("//div[@class='articleBody']//text()").extract()
+        description = response.xpath("//div[@class='articleBody']//text()").extract()
 
         # text preprocessing
-        detail = np.array(detail)
-        detail = [word.rstrip() for word in detail] # remove all trailing white spaces
-        detail = re.sub(r'[^a-zA-Z0-9\s]', "", str(detail)).lower()  # remove special characters, lowercase
-        detail = [word for word in detail.split() if word not in (sw)]  # remove stopwords
-        ps = PorterStemmer()
-        detail = ' '.join([ps.stem(word) for word in detail])   # stemming
-
-        # print the result
-        yield {'name': name, 'url': url, 'detail':detail}
-
-        # preprocessing some extracted info
-        # description = ''.join(detail)
+        description = preprocessing.preprocess_text(description)
 
         # create scrapy Item
-        # album = Album()
-        # album['name'] = name
-        # album['url'] = url
-        # album['description'] = description
+        album = Album()
+        album['name'] = name
+        album['url'] = url
+        album['description'] = description
+
+        yield album

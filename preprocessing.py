@@ -11,7 +11,6 @@ def preprocess_text(text, whitespace=True, specialchars=True, stopwords=True, st
     text to lowercase. stopwords=True removes stopwords, and stem=True uses a
     porterstemmer to turn each word to its stem. At default, all options are enabled.
     '''
-    #text = np.array(text)
     # remove trailing whitespaces
     if whitespace:
         text = " ".join(text.split())

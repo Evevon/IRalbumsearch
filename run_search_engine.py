@@ -5,6 +5,7 @@ from scrapy.settings import Settings
 import albumscraper.settings as crawl_settings
 from mapreduce import indexmusic, mr_settings
 
+
 def crawl_data():
     crawler_settings = Settings()
     crawler_settings.setmodule(crawl_settings)
@@ -24,5 +25,5 @@ def indexing():
     albumindexprocess.run()
 
 
-crawl_data()
+#crawl_data()
 indexing()

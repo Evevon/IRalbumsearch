@@ -4,7 +4,7 @@ Code in this file is based on mapcakes: https://github.com/nidhog/mapcakes
 """
 
 
-import settings
+import mapreduce.mr_settings as settings
 import json
 import os
 from multiprocessing import Process
@@ -64,27 +64,35 @@ class MapReduce(object):
         """Checks if we are on the right position"""
         return position == (hash(key) % self.n_reducers)
 
-    def run_mapper(self, index):
+    def run_mapper(self, map_index):
         """
         Runs the implemented mapper
         :param index: the index of the thread to run on
         """
-        # open the current file according to the index
-        f = open(settings.get_input_file(index), "r")
-        # read the document ID
-        doc_id = f.readline()
-        # read the document content
-        doc_content = f.read()
-        # get the result of the mapper
-        mapper_result = self.mapper(doc_id, doc_content)
+        # open the files in the right directory according to the index
+
+        dir_ = os.path.dirname(os.path.abspath(__file__))
+        file_list = os.listdir('{}/input_files/{}'.format(dir_, map_index))
+        mapper_result = []
+        for file in file_list:
+            # load file information
+            with open('{}/input_files/{}/{}'.format(dir_, map_index, file), "r") as f:
+                doc = json.load(f)
+                # get the result of the mapper
+                mapper_result.extend(self.mapper(doc['id'], doc['description']))
+
         # store the result to be used by the reducer
         # reducer is determined by hash value of the key
         for reducer_index in range(self.n_reducers):
-            temp_map_file = open(settings.get_temp_map_file(index, reducer_index), 'w+')
-            json.dump([(indexword, doc_id) for (indexword, doc_id) in mapper_result
-                            if self.check_position(indexword, reducer_index)],
-                        temp_map_file)
-            temp_map_file.close()
+            filename = '{}/temp_map_files/map_file_{}-{}.json'.format(dir_, map_index, reducer_index)
+            if os.path.exists(filename):
+                mode = 'a' # append if already exists
+            else:
+                mode = 'w' # make a new file if not
+            with open(filename, mode) as temp_map_file:
+                json.dump([(indexword, doc['id']) for (indexword, doc['id']) in mapper_result
+                                if self.check_position(indexword, reducer_index)],
+                            temp_map_file)
 
     def run_reducer(self, index):
         """
@@ -93,23 +101,26 @@ class MapReduce(object):
         """
         key_values_map = defaultdict(list)
         # load the results of the map
+        dir_ = os.path.dirname(os.path.abspath(__file__))
         for mapper_index in range(self.n_mappers):
-            temp_map_file = open(settings.get_temp_map_file(mapper_index, index), 'r')
-            mapper_results = json.load(temp_map_file)
-            # for each key reduce the values
-            for (key, value) in mapper_results:
-                key_values_map[key].append(value)
-            temp_map_file.close()
+            filename = '{}/temp_map_files/map_file_{}-{}.json'.format(dir_, mapper_index, index)
+            with open(filename, 'r') as temp_map_file:
+                mapper_results = json.load(temp_map_file)
+                # for each key reduce the values
+                for (key, value) in mapper_results:
+                    key_values_map[key].append(value)
+
             # remove temporary file
             if self.clean:
-                os.unlink(settings.get_temp_map_file(mapper_index, index))
+                os.unlink(filename)
+
         # store the results for this reducer
-        key_value_list = []
+        key_value_list = {}
         for key in key_values_map:
-            key_value_list.append(self.reducer(key, key_values_map[key]))
-        output_file = open(settings.get_output_file(index), 'w+')
-        json.dump(key_value_list, output_file)
-        output_file.close()
+            key_value_list[key] = self.reducer(key, key_values_map[key])
+
+        with open('{}/output_files/reduce_file_{}.json'.format(dir_, index), 'w+') as output_file:
+            json.dump(key_value_list, output_file)
 
     def run(self):
         """Executes the map and reduce operations"""
@@ -123,20 +134,24 @@ class MapReduce(object):
             p.start()
             map_workers.append(p)
         [t.join() for t in map_workers]
+
         # run the reduce step
         for thread_id in range(self.n_reducers):
             p = Process(target=self.run_reducer, args=(thread_id,))
             p.start()
             rdc_workers.append(p)
         [t.join() for t in rdc_workers]
+
         # generate concatenated output file
-        indexlist = []
+        dir_ = os.path.dirname(os.path.abspath(__file__))
+        indexlist = {}
         for reducer_index in range(self.n_reducers):
-            reduce_file = open(settings.get_output_file(reducer_index), 'r')
-            indexlist += json.load(reduce_file)
+            filename = '{}/output_files/reduce_file_{}.json'.format(dir_,reducer_index)
+            reduce_file = open(filename, 'r')
+            indexlist.update(json.load(reduce_file))
             reduce_file.close()
             if self.clean:
-                os.unlink(settings.get_output_file(reducer_index))
+                os.unlink(filename)
 
-        f = open(settings.get_output_join_file(), 'w+')
-        json.dump(indexlist, f)
+        with open('{}/output_files/output.json'.format(dir_), 'w+') as f:
+            json.dump(indexlist, f)

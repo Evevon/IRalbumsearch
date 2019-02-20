@@ -1,9 +1,7 @@
 import scrapy
 import json
-import preprocessing
 from urllib.parse import urljoin
 from albumscraper.items import Album
-from jsonwriter import write_to_json
 
 
 class NmeSpider(scrapy.Spider):
@@ -20,7 +18,7 @@ class NmeSpider(scrapy.Spider):
         for r in reviews:
             url = urljoin(response.url, r)
             yield scrapy.Request(url, callback=self.parse_album)
-        
+
         # follow pagination links
         next_page = response.xpath("//link[@rel='next']/@href").extract_first()
         if next_page:
@@ -37,27 +35,12 @@ class NmeSpider(scrapy.Spider):
 
         # text preprocessing
         description = ''.join(description_list)
-        description = preprocessing.preprocess_text(description)
-        name = preprocessing.preprocess_text(
-                name, specialchars=False, stopwords=False, stem=False)
 
         # create scrapy Item
         album = Album()
+        album['id'] = 'NME_' + str(self.count)
         album['url'] = url
         album['name'] = name
         album['description'] = description
-
-        data = {}
-        data['id'] = 'NME_' + str(self.count)
-        data['url'] = url
-        data['name'] = name
-        data['description'] = description
-
-        # path = '/Users/Friso/PycharmProjects/IRalbumsearch/data/'
-        # filename = str(path + 'NME_' + str(self.count) + '.json')
-        # with open(filename, 'w') as outfile:
-        #     json.dump(data, outfile)
-
-        write_to_json('NME_' + str(self.count) + '.json', self.count, data)
 
         yield album

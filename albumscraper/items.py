@@ -9,6 +9,7 @@ from scrapy.item import Item, Field
 
 
 class Album(Item):
+    id = Field()
     name = Field()
     url = Field()
     description = Field()

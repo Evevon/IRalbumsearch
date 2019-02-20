@@ -1,9 +1,9 @@
-from mapreduce import MapReduce
+from mapreduce.mapreduce import MapReduce
 import sys
-import settings
+import mapreduce.mr_settings
 
 
-class MusicIndex(MapReduce):
+class MusicIndexMapReduce(MapReduce):
     def __init__(self, input_dir, output_dir, n_mappers, n_reducers):
         MapReduce.__init__(self, input_dir, output_dir, n_mappers, n_reducers)
 
@@ -20,11 +20,4 @@ class MusicIndex(MapReduce):
         """Reducer function for music indexing"""
         # for each key word, return the document id's of the documents
         # in which the key word can be found.
-        return key, values_list
-
-
-test = MusicIndex(settings.default_input_dir,
-                        settings.default_output_dir,
-                        settings.default_n_mappers,
-                        settings.default_n_reducers)
-test.run()
+        return values_list

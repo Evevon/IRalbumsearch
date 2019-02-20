@@ -21,15 +21,15 @@ def get_input_file( index, input_dir = default_input_dir, extension = ".txt"):
 
 
 # return the name of the temporary map file corresponding to the given index
-def get_temp_map_file(index, reducer, output_dir = default_temp_dir, extension = ".txt"):
+def get_temp_map_file(index, reducer, output_dir = default_temp_dir, extension = ".json"):
     return "{}/map_file_{}-{}{}".format(output_dir, str(index), str(reducer), extension)
 
 
 # return the name of the output file given its corresponding index
-def get_output_file(index, output_dir = default_output_dir, extension = ".out"):
+def get_output_file(index, output_dir = default_output_dir, extension = ".json"):
     return "{}/reduce_file_{}{}".format(output_dir, str(index), extension)
 
 
 # return the name of the output file
-def get_output_join_file(output_dir = default_output_dir, extension = ".out"):
+def get_output_join_file(output_dir = default_output_dir, extension = ".json"):
     return "{}/output{}".format(output_dir, extension)

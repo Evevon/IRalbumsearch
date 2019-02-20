@@ -11,7 +11,6 @@ class PitchforkSpider(scrapy.Spider):
     allowed_domains = ['pitchfork.com']
     start_urls = ['https://pitchfork.com/reviews/albums/']
     count = 0
-    COUNT_MAX = 2
 
     def parse(self, response):
         # collect all album links
@@ -24,7 +23,7 @@ class PitchforkSpider(scrapy.Spider):
 
         # follow pagination links
         next_page = response.xpath(
-            "//link[contains(@data-react-helmet,'true') and contains(@rel,'next')]/@href").extract_first()
+          "//link[contains(@data-react-helmet,'true') and contains(@rel,'next')]/@href").extract_first()
         if next_page:
             next_page_url = response.urljoin(next_page)
             yield scrapy.Request(next_page_url,callback=self.parse)
@@ -41,27 +40,13 @@ class PitchforkSpider(scrapy.Spider):
 
         # text preprocessing
         description = ''.join(description_list)
-        description = preprocessing.preprocess_text(description)
-        name = preprocessing.preprocess_text(
-                name, specialchars=False, stopwords=False, stem=False)
 
         # create scrapy Item
         album = Album()
+        album['id'] = 'PF_' + str(self.count)
         album['url'] = url
         album['name'] = name
         album['description'] = description
 
-        data = {}        
-        data['id'] = 'PF_' + str(self.count)
-        data['url'] = url
-        data['name'] = name
-        data['description'] = description
-
-        # path = '/Users/Friso/PycharmProjects/IRalbumsearch/data/'
-        # filename = str(path + 'PF_' + str(self.count) + '.json')
-        # with open(filename, 'w') as outfile:
-        #     json.dump(data, outfile)
-
-        write_to_json('PF_' + str(self.count) + '.json', self.count, data)
 
         yield album

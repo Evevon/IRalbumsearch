@@ -1,3 +1,8 @@
+"""
+This file contains all the functionality of the music album search engine.
+Running this file in the terminal will initialize the search engine.
+"""
+
 import os
 import scrapy
 from scrapy.crawler import CrawlerProcess
@@ -18,6 +23,7 @@ def create_directories():
         if not os.path.exists(dir_ + '/'+ 'mapreduce/input_files/' + str(mapper)):
             os.makedirs(dir_ + '/' + 'mapreduce/input_files/' + str(mapper))
 
+
 def crawl_data():
     crawler_settings = Settings()
     crawler_settings.setmodule(crawl_settings)
@@ -35,6 +41,7 @@ def indexing():
                           mr_settings.default_input_dir, mr_settings.default_output_dir,
                           mr_settings.default_n_mappers, mr_settings.default_n_reducers)
     albumindexprocess.run()
+
 
 create_directories()
 crawl_data()

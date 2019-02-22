@@ -9,15 +9,14 @@ class MusicIndexMapReduce(MapReduce):
     def __init__(self, input_dir, output_dir, n_mappers, n_reducers):
         MapReduce.__init__(self, input_dir, output_dir, n_mappers, n_reducers)
 
-    def mapper(self, doc_id, doc_content):
+    def mapper(self, doc_id, word_list):
         """Map function for music indexing"""
         results = []
         # each word that appears in the document content gets as value the
         # document it is encountered.
-        word_list = doc_content.split()
         word_count = Counter(word_list)
         for word in set(word_list):
-            results.append((word, (doc_id, word_count[word])))
+            results.append((word, {"doc_id":doc_id, "count": word_count[word]}))
         return results
 
     def reducer(self, key, N, values_list):
@@ -27,6 +26,6 @@ class MusicIndexMapReduce(MapReduce):
         df = len(values_list)
         idf = N/df
         for value in values_list:
-            tf = value[1]
-            value.append(tf * log10(idf))
+            tf = value["count"]
+            value["tfidf"] = tf * log10(idf)
         return values_list

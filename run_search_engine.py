@@ -1,3 +1,8 @@
+"""
+This file contains all the functionality of the music album search engine.
+Running this file in the terminal will initialize the search engine.
+"""
+
 import os
 import scrapy
 from scrapy.crawler import CrawlerProcess

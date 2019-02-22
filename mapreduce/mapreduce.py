@@ -17,7 +17,7 @@ class MapReduce(object):
     note: the 'mapper' and 'reducer' methods must be
     implemented to use the mapreduce model.
     """
-    def __init__(self, input_dir = settings.default_input_dir,
+    def __init__(self, dir, input_dir = settings.default_input_dir,
                  output_dir = settings.default_output_dir,
                  n_mappers = settings.default_n_mappers,
                  n_reducers = settings.default_n_reducers,
@@ -39,6 +39,9 @@ class MapReduce(object):
         self.n_mappers = n_mappers
         self.n_reducers = n_reducers
         self.clean = clean
+        self.N = self.get_n_documents()
+
+        print(self.N)
 
     def mapper(self, key, value):
         """
@@ -51,7 +54,7 @@ class MapReduce(object):
         """
         pass
 
-    def reducer(self, key, values_list):
+    def reducer(self, key, N, values_list):
         """
         Outputs a single value together with the provided key.
         Note: this function is to be implemented.
@@ -59,6 +62,16 @@ class MapReduce(object):
         :param value_list:
         """
         pass
+
+    def get_n_documents(self):
+        """outputs an integer denoting the amount of input documents."""
+        dir_ = os.path.dirname(os.path.abspath(__file__))
+        pathname = "{}/input_files/".format(dir_)
+        amount_of_files = 0
+        for dir_index in range(self.n_mappers):
+            amount_of_files += len(os.listdir(pathname + "/" + str(dir_index)))
+
+        return amount_of_files
 
     def check_position(self, key, position):
         """Checks if we are on the right position"""
@@ -70,7 +83,6 @@ class MapReduce(object):
         :param index: the index of the thread to run on
         """
         # open the files in the right directory according to the index
-
         dir_ = os.path.dirname(os.path.abspath(__file__))
         file_list = os.listdir('{}/input_files/{}'.format(dir_, map_index))
         mapper_result = []
@@ -79,7 +91,7 @@ class MapReduce(object):
             with open('{}/input_files/{}/{}'.format(dir_, map_index, file), "r") as f:
                 doc = json.load(f)
                 # get the result of the mapper
-                mapper_result.extend(self.mapper(doc['id'], doc['description']))
+                mapper_result.extend(self.mapper(doc['url'], doc['description']))
 
         # store the result to be used by the reducer
         # reducer is determined by hash value of the key
@@ -90,7 +102,7 @@ class MapReduce(object):
             else:
                 mode = 'w' # make a new file if not
             with open(filename, mode) as temp_map_file:
-                json.dump([(indexword, doc['id']) for (indexword, doc['id']) in mapper_result
+                json.dump([(indexword, doc['url']) for (indexword, doc['url']) in mapper_result
                                 if self.check_position(indexword, reducer_index)],
                             temp_map_file)
 
@@ -99,9 +111,9 @@ class MapReduce(object):
         Runs the implemented reducer
         :param index: the index of the thread to run on
         """
+        dir_ = os.path.dirname(os.path.abspath(__file__))
         key_values_map = defaultdict(list)
         # load the results of the map
-        dir_ = os.path.dirname(os.path.abspath(__file__))
         for mapper_index in range(self.n_mappers):
             filename = '{}/temp_map_files/map_file_{}-{}.json'.format(dir_, mapper_index, index)
             with open(filename, 'r') as temp_map_file:
@@ -117,13 +129,14 @@ class MapReduce(object):
         # store the results for this reducer
         key_value_list = {}
         for key in key_values_map:
-            key_value_list[key] = self.reducer(key, key_values_map[key])
+            key_value_list[key] = self.reducer(key, self.N, key_values_map[key])
 
         with open('{}/output_files/reduce_file_{}.json'.format(dir_, index), 'w+') as output_file:
             json.dump(key_value_list, output_file)
 
     def run(self):
         """Executes the map and reduce operations"""
+        dir_ = os.path.dirname(os.path.abspath(__file__))
         # initialize mappers list
         map_workers = []
         # initialize reducers list
@@ -143,7 +156,6 @@ class MapReduce(object):
         [t.join() for t in rdc_workers]
 
         # generate concatenated output file
-        dir_ = os.path.dirname(os.path.abspath(__file__))
         indexlist = {}
         for reducer_index in range(self.n_reducers):
             filename = '{}/output_files/reduce_file_{}.json'.format(dir_,reducer_index)
@@ -153,5 +165,5 @@ class MapReduce(object):
             if self.clean:
                 os.unlink(filename)
 
-        with open('{}/output_files/output.json'.format(dir_), 'w+') as f:
+        with open('{}/output_files/index.json'.format(dir_), 'w+') as f:
             json.dump(indexlist, f)

@@ -39,7 +39,10 @@ def term_based_search():
     query = 'best albums of 2019'
     query = preprocess_text(query)
 
-    query_tfidf = [(max(float(0), 1 + log10(count))) * (log10(len(index) / len(index[word])))
+    n = {url['doc_id'] for item in index.values() for url in item}
+    n = len(n)
+
+    query_tfidf = [(max(float(0), 1 + log10(count))) * (log10(n) / len(index[word]))
                    for word, count in Counter(query).items()]
 
     dict_docs = dict()

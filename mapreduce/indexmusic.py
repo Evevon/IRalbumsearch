@@ -3,6 +3,7 @@ import sys
 import mapreduce.mr_settings
 from collections import Counter
 from math import log10
+from math import log
 import os
 
 class MusicIndexMapReduce(MapReduce):
@@ -24,8 +25,8 @@ class MusicIndexMapReduce(MapReduce):
         # for each key word, return the document id's of the documents
         # in which the key word can be found. Add tf * idf value.
         df = len(values_list)
-        idf = N/df
+        idf = log10(N/df)
         for value in values_list:
-            tf = value["count"]
-            value["tfidf"] = tf * log10(idf)
+            tf = max(0, 1 + log10(value["count"]))
+            value["tfidf"] = tf * idf
         return values_list

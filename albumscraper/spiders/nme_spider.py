@@ -32,6 +32,7 @@ class NmeSpider(scrapy.Spider):
         name = response.xpath("//h1[@class='title-primary']//text()").extract_first()
         url = response.request.url
         description_list = response.xpath("//div[@class='articleBody']/p//text()").extract()
+        date_published = response.xpath('//meta[@itemprop="datePublished"]/@content').extract()
 
         # text preprocessing
         description = ''.join(description_list)
@@ -42,5 +43,6 @@ class NmeSpider(scrapy.Spider):
         album['url'] = url
         album['name'] = name
         album['description'] = description
+        album['date_published'] = date_published
 
         yield album

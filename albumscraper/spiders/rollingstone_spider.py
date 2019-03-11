@@ -37,6 +37,9 @@ class RollingstoneSpider(scrapy.Spider):
         description_list = response.xpath(
           """//meta[contains(@class,'swiftype') and contains(@name,'body')
           and contains(@data-type,'text')]/@content""").extract()
+        date_published = response.xpath(
+            """//meta[contains(@class,'swiftype') and contains(@name,'published_at')
+            and contains(@data-type,'date')]/@content""").extract()
 
         # text preprocessing
         description = ''.join(description_list)
@@ -47,5 +50,7 @@ class RollingstoneSpider(scrapy.Spider):
         album['url'] = url
         album['name'] = name
         album['description'] = description
+        album['date_published'] = date_published
+
 
         yield album

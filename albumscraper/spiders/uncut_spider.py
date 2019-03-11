@@ -36,6 +36,7 @@ class UncutSpiderSpider(scrapy.Spider):
         url = response.request.url
         description_list = response.xpath(
         "//div[@itemprop='articleBody']//p//text()").extract()
+        date_published = response.xpath("//meta[@property='article:published_time']/@content").extract()
 
         # text preprocessing
         description = ''.join(description_list)
@@ -46,6 +47,7 @@ class UncutSpiderSpider(scrapy.Spider):
         album['url'] = url
         album['name'] = name
         album['description'] = description
+        album['date_published'] = date_published
 
         yield album
 

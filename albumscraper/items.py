@@ -13,3 +13,4 @@ class Album(Item):
     name = Field()
     url = Field()
     description = Field()
+    date_published = Field()

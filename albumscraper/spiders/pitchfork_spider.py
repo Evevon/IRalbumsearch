@@ -37,6 +37,7 @@ class PitchforkSpider(scrapy.Spider):
         url = response.request.url
         description_list = response.xpath(
           "//div[@class='contents dropcap']//text()").extract()
+        date_published = response.xpath('//time[@class="pub-date"]/@datetime').extract()
 
         # text preprocessing
         description = ''.join(description_list)
@@ -47,6 +48,7 @@ class PitchforkSpider(scrapy.Spider):
         album['url'] = url
         album['name'] = name
         album['description'] = description
+        album['date_published'] = date_published
 
 
         yield album

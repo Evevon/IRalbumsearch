@@ -6,7 +6,8 @@ Running this file in the terminal will initialize the search engine.
 import os
 import scrapy
 from scrapy.crawler import CrawlerProcess
-from albumscraper.spiders import nme_spider, pitchfork_spider, rollingstone_spider
+from albumscraper.spiders import nme_spider, pitchfork_spider, 
+    rollingstone_spider, theguardian_spider, uncut_spider
 from scrapy.settings import Settings
 import albumscraper.settings as crawl_settings
 from mapreduce import indexmusic, mr_settings
@@ -35,6 +36,8 @@ def crawl_data():
     process.crawl(nme_spider.NmeSpider)
     process.crawl(pitchfork_spider.PitchforkSpider)
     process.crawl(rollingstone_spider.RollingstoneSpider)
+    process.crawl(theguardian_spider.TheGuardianSpider)
+    process.crawl(uncut_spider.UncutSpiderSpider)
     process.start()
 
 

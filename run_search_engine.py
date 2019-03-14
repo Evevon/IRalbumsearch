@@ -22,6 +22,8 @@ def create_directories():
     for mapper in range(num_mappers):
         if not os.path.exists(dir_ + '/'+ 'mapreduce/input_files/' + str(mapper)):
             os.makedirs(dir_ + '/' + 'mapreduce/input_files/' + str(mapper))
+    if not os.path.exists(dir_+ '/albumscraper/sentiment/'):
+        os.makedirs(dir_+ '/albumscraper/sentiment/')
 
 
 def crawl_data():

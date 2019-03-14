@@ -10,6 +10,7 @@ from jsonwriter import write_to_json
 import json
 import os
 from textblob import TextBlob
+import spacy
 
 
 class AlbumscraperPipeline(object):
@@ -17,11 +18,16 @@ class AlbumscraperPipeline(object):
 
         dir_ = os.path.dirname(os.path.abspath(__file__))
 
-        #sentiment analysis
+        #sentiment and entity extraction
         blob = album['description']
-        blob = TextBlob(blob)
-        sentiment_dict = {'sentiment': blob.sentiment[0], 'polarity': blob.sentiment[1]}
 
+        sentiment_blob = TextBlob(blob)
+        nlp = spacy.load('en')
+        entity_blob = nlp(blob)
+        entities = {X.text for X in entity_blob.ents if X.label_ == 'PERSON'}
+        entities = list(entities)
+
+        sentiment_dict = {'sentiment': sentiment_blob.sentiment[0], 'polarity': sentiment_blob.sentiment[1], 'entities': entities}
 
         with open(dir_+ '/sentiment/' + spider.name + str(spider.count) + '_sentiment.json', 'w') as outfile:
           json.dump(sentiment_dict, outfile)

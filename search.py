@@ -56,7 +56,7 @@ def term_based_search():
     n = {url['doc_id'] for item in index.values() for url in item}
     n = len(n)
 
-    query_tfidf = [(max(float(0), 1 + log10(count))) * (log10(n) / len(index[word]))
+    query_tfidf = [(max(float(0), 1 + log10(count))) * (log10(n / len(index[word])))
                    for word, count in Counter(query).items()]
 
     dict_docs = dict()

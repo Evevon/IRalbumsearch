@@ -35,6 +35,8 @@ def crawl_data():
     process.crawl(nme_spider.NmeSpider)
     process.crawl(pitchfork_spider.PitchforkSpider)
     process.crawl(rollingstone_spider.RollingstoneSpider)
+    process.crawl(theguardian_spider.TheGuardianSpider)
+    process.crawl(uncut_spider.UncutSpiderSpider)
     process.start()
 
 

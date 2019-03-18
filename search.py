@@ -6,6 +6,8 @@ from scipy import spatial
 import time
 import operator
 from preprocessing import preprocess_text
+from spellchecker import SpellChecker
+
 
 dir_ = os.path.dirname(os.path.abspath(__file__))
 with open(dir_ + '/mapreduce/output_files/index.json') as f:
@@ -16,6 +18,12 @@ starttime = time.time()
 
 def basic_search():
     query = 'best albums of 2019'
+
+    #check spelling:
+    spell = SpellChecker()
+    corrected_query = [spell.correction(word) for word in query.split()]
+    print(' '.join(corrected_query))
+
     query = preprocess_text(query)
 
     dict_docs = dict()
@@ -37,6 +45,12 @@ def basic_search():
 
 def term_based_search():
     query = 'best albums of 2019'
+
+    #check spelling:
+    spell = SpellChecker()
+    corrected_query = [spell.correction(word) for word in query.split()]
+    print(' '.join(corrected_query))
+
     query = preprocess_text(query)
 
     n = {url['doc_id'] for item in index.values() for url in item}

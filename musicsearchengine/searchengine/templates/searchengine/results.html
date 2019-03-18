@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+
+    <title> musicsearch </title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'searchengine/style.css' %}">
+</head>
+
+<body>
+
+  <div id="banner">
+    <div id="title">
+      <h1> results </h1>
+    </div>
+  </div>
+  <div id="content">
+    <ul id="resultlist">
+    {% for result in searchresults %}
+      <li>
+        <div id="searchresult">
+          <a href="{{result.0}}"> {{result.1.1}} </a>
+        </div>
+      </li>
+    {% endfor %}
+    </ul>
+    <a id="backbtn" href="{% url 'index' %}"> go back </a>
+  </div>
+
+</body>
+</html>

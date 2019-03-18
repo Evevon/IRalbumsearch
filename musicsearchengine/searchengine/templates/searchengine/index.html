@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+
+    <title> musicsearch </title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'searchengine/style.css' %}">
+</head>
+
+<body>
+
+  <div id="banner">
+    <div id="title">
+      <h1> Music Search Engine </h1>
+    </div>
+  </div>
+  <div id="content">
+    <form id="searchform" method="post" action="{% url 'results' %}">
+      {% csrf_token %}
+      <div class="fieldwrapper">
+        <div class="input">
+          <input name="searchquery" type="text" size="50"/>
+        </div>
+      </div>
+      <div class="fieldwrapper">
+        <button id="searchbtn" name="querybtn" type="submit" value="submit">
+          search music!
+        </button>
+      </div>
+    </form>
+  </div>
+
+</body>
+</html>

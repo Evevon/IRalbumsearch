@@ -43,7 +43,7 @@ class MapReduce(object):
 
         print(self.N)
 
-    def mapper(self, key, value):
+    def mapper(self, values):
         """
         outputs a list of key-value pairs, where the key is
         potentially new and the values are of a potentially
@@ -91,7 +91,7 @@ class MapReduce(object):
             with open('{}/input_files/{}/{}'.format(dir_, map_index, file), "r") as f:
                 doc = json.load(f)
                 # get the result of the mapper
-                mapper_result.extend(self.mapper(doc['url'], doc['name'], doc['pptitle'], doc['description']))
+                mapper_result.extend(self.mapper(doc))
 
         # store the result to be used by the reducer
         # reducer is determined by hash value of the key

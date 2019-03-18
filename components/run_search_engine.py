@@ -53,6 +53,6 @@ def indexing(indextype):
         albumindexprocess.run("title")
 
 
-create_directories()
-crawl_data()
+#create_directories()
+#crawl_data()
 indexing("title")

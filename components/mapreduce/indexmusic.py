@@ -10,16 +10,22 @@ class MusicIndexMapReduce(MapReduce):
     def __init__(self, input_dir, output_dir, n_mappers, n_reducers):
         MapReduce.__init__(self, input_dir, output_dir, n_mappers, n_reducers)
 
-    def mapper(self, doc_id, title, word_list):
+    def mapper(self, doc):
         """Map function for music indexing"""
+        doc_id = doc['url'],
+        title = doc['name'],
+        word_list = doc['description']
+        date = doc['date_published']
+
         results = []
         # each word that appears in the document content gets as value the
         # document it is encountered.
         word_count = Counter(word_list)
         for word in set(word_list):
-            results.append((word, {"doc_id": doc_id,
-                                   "title": title,
-                                   "count": word_count[word],
+            results.append((word, {"doc_id" : doc_id,
+                                   "title" : title,
+                                   "date" : date,
+                                   "count" : word_count[word],
                                    }))
         return results
 
@@ -40,17 +46,24 @@ class TitleIndexMapReduce(MapReduce):
     def __init__(self, input_dir, output_dir, n_mappers, n_reducers):
         MapReduce.__init__(self, input_dir, output_dir, n_mappers, n_reducers)
 
-    def mapper(self, doc_id, title, pptitle, word_list):
+    def mapper(self, doc):
         """Map function for music indexing"""
+        doc_id = doc['url']
+        title = doc['name']
+        word_list = doc['pptitle']
+        date = doc['date_published']
+
         results = []
         # each word that appears in the document title gets as value the
         # document it is encountered.
-        word_count = Counter(pptitle)
-        for word in set(pptitle):
-            results.append((word, {"doc_id": doc_id,
-                                   "title": title,
+        word_count = Counter(word_list)
+        for word in set(word_list):
+            results.append((word, {"doc_id" : doc_id,
+                                   "title" : title,
+                                   "date" : date,
                                    "count": word_count[word],
                                    }))
+        print(results)
         return results
 
     def reducer(self, key, N, values_list):

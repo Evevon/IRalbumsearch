@@ -4,7 +4,9 @@ import preprocessing
 from urllib.parse import urljoin
 from albumscraper.items import Album
 from jsonwriter import write_to_json
-
+import os
+from dateutil.parser import parse
+from datetime import datetime
 
 class PitchforkSpider(scrapy.Spider):
     name = 'pitchfork_spider'
@@ -15,8 +17,8 @@ class PitchforkSpider(scrapy.Spider):
     def parse(self, response):
         # collect all album links
         reviews = response.xpath('//div[@class="review"]/a/@href').extract()
+        
         # visit each album link and gather album info
-
         for r in reviews:
             url = urljoin(response.url, r)
             yield scrapy.Request(url, callback=self.parse_album)
@@ -47,7 +49,6 @@ class PitchforkSpider(scrapy.Spider):
         album['id'] = 'PF_' + str(self.count)
         album['url'] = url
         album['name'] = name
-        album['pptitle'] = name
         album['description'] = description
         album['date_published'] = date_published
 

@@ -40,13 +40,19 @@ def crawl_data():
     process.start()
 
 
-def indexing():
-    albumindexprocess = indexmusic.MusicIndexMapReduce(
-                          mr_settings.default_input_dir, mr_settings.default_output_dir,
-                          mr_settings.default_n_mappers, mr_settings.default_n_reducers)
-    albumindexprocess.run()
+def indexing(indextype):
+    if indextype == "content":
+        albumindexprocess = indexmusic.MusicIndexMapReduce(
+                              mr_settings.default_input_dir, mr_settings.default_output_dir,
+                              mr_settings.default_n_mappers, mr_settings.default_n_reducers)
+        albumindexprocess.run("content")
+    elif indextype == "title":
+        albumindexprocess = indexmusic.TitleIndexMapReduce(
+                              mr_settings.default_input_dir, mr_settings.default_output_dir,
+                              mr_settings.default_n_mappers, mr_settings.default_n_reducers)
+        albumindexprocess.run("title")
 
 
 create_directories()
 crawl_data()
-indexing()
+indexing("title")

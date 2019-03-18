@@ -91,7 +91,7 @@ class MapReduce(object):
             with open('{}/input_files/{}/{}'.format(dir_, map_index, file), "r") as f:
                 doc = json.load(f)
                 # get the result of the mapper
-                mapper_result.extend(self.mapper(doc['url'], doc['name'], doc['description']))
+                mapper_result.extend(self.mapper(doc['url'], doc['name'], doc['pptitle'], doc['description']))
 
         # store the result to be used by the reducer
         # reducer is determined by hash value of the key
@@ -134,7 +134,7 @@ class MapReduce(object):
         with open('{}/output_files/reduce_file_{}.json'.format(dir_, index), 'w+') as output_file:
             json.dump(key_value_list, output_file)
 
-    def run(self):
+    def run(self, indextype):
         """Executes the map and reduce operations"""
         dir_ = os.path.dirname(os.path.abspath(__file__))
         # initialize mappers list
@@ -165,5 +165,5 @@ class MapReduce(object):
             if self.clean:
                 os.unlink(filename)
 
-        with open('{}/output_files/index.json'.format(dir_), 'w+') as f:
+        with open('{}/output_files/{}_index.json'.format(dir_, indextype), 'w+') as f:
             json.dump(indexlist, f)

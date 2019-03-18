@@ -11,6 +11,7 @@ from scrapy.item import Item, Field
 class Album(Item):
     id = Field()
     name = Field()
+    pptitle = Field()
     url = Field()
     description = Field()
     date_published = Field()

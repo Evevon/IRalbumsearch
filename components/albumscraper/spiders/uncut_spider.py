@@ -46,8 +46,8 @@ class UncutSpiderSpider(scrapy.Spider):
         album['id'] = 'UN_' + str(self.count)
         album['url'] = url
         album['name'] = name
+        album['pptitle'] = name
         album['description'] = description
         album['date_published'] = date_published
 
         yield album
-

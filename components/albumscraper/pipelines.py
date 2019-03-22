@@ -15,26 +15,13 @@ import spacy
 
 class AlbumscraperPipeline(object):
     def process_item(self, album, spider):
-
-        dir_ = os.path.dirname(os.path.abspath(__file__))
-
-        #sentiment and entity extraction
-        #blob = album['description']
-
-        #sentiment_blob = TextBlob(blob)
-        #nlp = spacy.load('en')
-        #entity_blob = nlp(blob)
-        #entities = {X.text for X in entity_blob.ents if X.label_ == 'PERSON'}
-        #entities = list(entities)
-
-        #sentiment_dict = {'sentiment': sentiment_blob.sentiment[0], 'polarity': sentiment_blob.sentiment[1], 'entities': entities}
-
-        #with open(dir_+ '/sentiment/' + spider.name + str(spider.count) + '_sentiment.json', 'w') as outfile:
-        #  json.dump(sentiment_dict, outfile)
+        # sentiment extraction
+        blob = TextBlob(album['description'])
+        album['sentiment'] = blob.sentiment.polarity
 
         # text preprocessing
         album['description'] = preprocessing.preprocess_text(album['description'])
-        album['pptitle'] = preprocessing.preprocess_text(album['pptitle'])
+        album['pptitle'] = preprocessing.preprocess_text(album['name'])
         album['name'] = preprocessing.preprocess_text(
                           album['name'], specialchars=False,
                           stopwords=False, stem=False)
@@ -44,3 +31,18 @@ class AlbumscraperPipeline(object):
           spider.name + str(spider.count) + '.json', spider.count, dict(album))
 
         return album
+
+
+#sentiment and entity extraction
+#blob = album['description']
+
+#sentiment_blob = TextBlob(blob)
+#nlp = spacy.load('en')
+#entity_blob = nlp(blob)
+#entities = {X.text for X in entity_blob.ents if X.label_ == 'PERSON'}
+#entities = list(entities)
+
+#sentiment_dict = {'sentiment': sentiment_blob.sentiment[0], 'polarity': sentiment_blob.sentiment[1], 'entities': entities}
+
+#with open(dir_+ '/sentiment/' + spider.name + str(spider.count) + '_sentiment.json', 'w') as outfile:
+#  json.dump(sentiment_dict, outfile)

@@ -13,7 +13,7 @@ BOT_NAME = 'albumscraper'
 
 SPIDER_MODULES = ['albumscraper.spiders']
 NEWSPIDER_MODULE = 'albumscraper.spiders'
-CLOSESPIDER_PAGECOUNT = 10
+CLOSESPIDER_PAGECOUNT = 200
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 USER_AGENT = 'albumscraper (evelyne.van.oers@hotmail.com)'

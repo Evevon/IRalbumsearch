@@ -36,23 +36,21 @@ def crawl_data():
     process.crawl(pitchfork_spider.PitchforkSpider)
     process.crawl(rollingstone_spider.RollingstoneSpider)
     process.crawl(theguardian_spider.TheGuardianSpider)
-    process.crawl(uncut_spider.UncutSpiderSpider)
+    process.crawl(uncut_spider.UncutSpider)
     process.start()
 
 
-def indexing(indextype):
-    if indextype == "content":
-        albumindexprocess = indexmusic.MusicIndexMapReduce(
-                              mr_settings.default_input_dir, mr_settings.default_output_dir,
-                              mr_settings.default_n_mappers, mr_settings.default_n_reducers)
-        albumindexprocess.run("content")
-    elif indextype == "title":
-        albumindexprocess = indexmusic.TitleIndexMapReduce(
-                              mr_settings.default_input_dir, mr_settings.default_output_dir,
-                              mr_settings.default_n_mappers, mr_settings.default_n_reducers)
-        albumindexprocess.run("title")
+def indexing():
+    albumindexprocess = indexmusic.MusicIndexMapReduce(
+                          mr_settings.default_input_dir, mr_settings.default_output_dir,
+                          mr_settings.default_n_mappers, mr_settings.default_n_reducers)
+    albumindexprocess.run("content")
+    albumindexprocess = indexmusic.TitleIndexMapReduce(
+                          mr_settings.default_input_dir, mr_settings.default_output_dir,
+                          mr_settings.default_n_mappers, mr_settings.default_n_reducers)
+    albumindexprocess.run("title")
 
 
-#create_directories()
+create_directories()
 #crawl_data()
-indexing("title")
+indexing()

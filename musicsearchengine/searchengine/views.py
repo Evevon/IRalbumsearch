@@ -8,8 +8,8 @@ def index(request):
     '''
     # if search index is loaded, retrieve. else, load search index
     if 'searchindex' not in request.session:
-        searchindex = loadsearchindex()
-        request.session['searchindex'] = searchindex
+        indices = loadsearchindex('m')
+        request.session['searchindex'] = indices
 
     context = {}
 
@@ -18,8 +18,10 @@ def index(request):
 
 def results(request):
     query = request.POST.get('searchquery')
-    searchindex = request.session.get('searchindex')
-    searchresults = term_based_search(query, searchindex)
+    indices = request.session.get('searchindex')
+    misspelled, query, searchresults = term_based_search(query, *indices, 2, 1)
     context = {'searchresults' : searchresults,
+               'misspelled' : misspelled,
+               'query' : query,
               }
     return render(request, 'searchengine/results.html', context)

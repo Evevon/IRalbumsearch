@@ -15,3 +15,4 @@ class Album(Item):
     url = Field()
     description = Field()
     date_published = Field()
+    sentiment = Field()

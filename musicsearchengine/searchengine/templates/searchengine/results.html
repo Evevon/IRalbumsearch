@@ -16,13 +16,25 @@
     </div>
   </div>
   <div id="content">
+    {% if misspelled %}
+    <form method="post" action="{% url 'results' %}">
+      {% csrf_token %}
+      <input type="hidden" name="searchquery" value="{{query}}" />
+      <button id="suggestionbtn" type="submit">
+        Do you mean "{{query}}"?
+      </button>
+    </form>
+    {% endif %}
     <ul id="resultlist">
     {% for result in searchresults %}
       <li>
         <div id="searchresult">
           <a href="{{result.0}}"> {{result.1.1}} </a>
           <br>
+          {{result.1.0}}
           document from {{result.1.2}}
+          <br>
+          sentiment: {{result.1.3}}
         </div>
       </li>
     {% endfor %}

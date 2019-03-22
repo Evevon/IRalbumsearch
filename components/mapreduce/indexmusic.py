@@ -12,10 +12,11 @@ class MusicIndexMapReduce(MapReduce):
 
     def mapper(self, doc):
         """Map function for music indexing"""
-        doc_id = doc['url'],
-        title = doc['name'],
+        doc_id = doc['url']
+        title = doc['name']
         word_list = doc['description']
         date = doc['date_published']
+        sentiment = doc['sentiment']
 
         results = []
         # each word that appears in the document content gets as value the
@@ -26,6 +27,7 @@ class MusicIndexMapReduce(MapReduce):
                                    "title" : title,
                                    "date" : date,
                                    "count" : word_count[word],
+                                   "sentiment" : sentiment,
                                    }))
         return results
 
@@ -52,6 +54,7 @@ class TitleIndexMapReduce(MapReduce):
         title = doc['name']
         word_list = doc['pptitle']
         date = doc['date_published']
+        sentiment = doc['sentiment']
 
         results = []
         # each word that appears in the document title gets as value the
@@ -62,8 +65,8 @@ class TitleIndexMapReduce(MapReduce):
                                    "title" : title,
                                    "date" : date,
                                    "count": word_count[word],
+                                   "sentiment" : sentiment,
                                    }))
-        print(results)
         return results
 
     def reducer(self, key, N, values_list):

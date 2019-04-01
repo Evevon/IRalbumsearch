@@ -16,3 +16,4 @@ class Album(Item):
     description = Field()
     date_published = Field()
     sentiment = Field()
+    content = Field()

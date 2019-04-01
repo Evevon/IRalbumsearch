@@ -60,17 +60,30 @@ input[type="text"] {
 }
 
 #resultlist > li {
-  border: 2px solid grey;
-  height: 100px;
+  padding: 10px;
+  height: 150px;
   margin-top: 20px;
   margin-bottom: 20px;
 }
 
-#searchresult {
+.searchresult {
   text-align: left;
+  font-size: 18px;
+  display: inline-block;
+  width: 100%;
 }
 
-#searchresult > a {
+.info {
+  width: 20%;
+  float: left;
+}
+
+.resultcontent {
+  width: 75%;
+  float: right;
+}
+
+.resultlink {
   font-size: 20px;
 }
 
@@ -81,3 +94,14 @@ input[type="text"] {
 #backbtn {
   font-size: 25px;
 }
+
+#highlight {
+  background-color: yellow;
+  font-weight: bold;
+}
+
+.VP { background-color: rgb(210, 255, 178)}
+.MP { background-color: rgb(235, 255, 178)}
+.NE { background-color: rgb(255, 242, 178)}
+.MN { background-color: rgb(255, 230, 178)}
+.VN { background-color: rgb(255, 208, 178)}

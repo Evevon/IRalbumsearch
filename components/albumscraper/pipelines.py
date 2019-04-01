@@ -20,6 +20,7 @@ class AlbumscraperPipeline(object):
         album['sentiment'] = blob.sentiment.polarity
 
         # text preprocessing
+        album['content'] = album['description']
         album['description'] = preprocessing.preprocess_text(album['description'])
         album['pptitle'] = preprocessing.preprocess_text(album['name'])
         album['name'] = preprocessing.preprocess_text(

@@ -52,5 +52,5 @@ def indexing():
 
 
 create_directories()
-#crawl_data()
+crawl_data()
 indexing()

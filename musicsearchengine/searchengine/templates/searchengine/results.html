@@ -27,14 +27,22 @@
     {% endif %}
     <ul id="resultlist">
     {% for result in searchresults %}
-      <li>
-        <div id="searchresult">
-          <a href="{{result.0}}"> {{result.1.1}} </a>
-          <br>
-          {{result.1.0}}
-          document from {{result.1.2}}
-          <br>
-          sentiment: {{result.1.3}}
+      <li class={{result.1.5}}>
+        <div class="searchresult">
+          <div class="info">
+            <b>Sentiment:</b>
+            <br>
+            {{result.1.3}}
+            <br>
+            <b>Date retrieved:</b>
+            <br>
+            {{result.1.2}}
+          </div>
+          <div class="resultcontent">
+            <a class="resultlink" href="{{result.0}}"> {{result.1.1|safe}} </a>
+            <br>
+            <p>{{result.1.4|safe}}</p>
+          </div>
         </div>
       </li>
     {% endfor %}

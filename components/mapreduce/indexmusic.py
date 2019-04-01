@@ -17,6 +17,7 @@ class MusicIndexMapReduce(MapReduce):
         word_list = doc['description']
         date = doc['date_published']
         sentiment = doc['sentiment']
+        content = doc['content']
 
         results = []
         # each word that appears in the document content gets as value the
@@ -28,6 +29,7 @@ class MusicIndexMapReduce(MapReduce):
                                    "date" : date,
                                    "count" : word_count[word],
                                    "sentiment" : sentiment,
+                                   "content" : content,
                                    }))
         return results
 
@@ -55,6 +57,7 @@ class TitleIndexMapReduce(MapReduce):
         word_list = doc['pptitle']
         date = doc['date_published']
         sentiment = doc['sentiment']
+        content = doc['content']
 
         results = []
         # each word that appears in the document title gets as value the
@@ -66,6 +69,7 @@ class TitleIndexMapReduce(MapReduce):
                                    "date" : date,
                                    "count": word_count[word],
                                    "sentiment" : sentiment,
+                                   "content" : content,
                                    }))
         return results
 
